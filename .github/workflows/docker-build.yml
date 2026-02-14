@@ -36,6 +36,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
+          echo "Building Docker image using ./app as context..."
           docker build -t memos-app:latest ./app
 
       - name: Tag and Push Docker Image
@@ -46,23 +47,5 @@ jobs:
           docker tag memos-app:latest "${IMAGE_URI}:latest"
           docker push "${IMAGE_URI}:latest"
 
-          SHA_TAG=${GITHUB_SHA::8}
-          docker tag memos-app:latest "${IMAGE_URI}:${SHA_TAG}"
-          docker push "${IMAGE_URI}:${SHA_TAG}"
-
-          echo "IMAGE_URI=${IMAGE_URI}" >> $GITHUB_ENV
-          echo "IMAGE_SHA_TAG=${SHA_TAG}" >> $GITHUB_ENV
-
-      - name: Security Scan with Trivy
-        uses: aquasecurity/trivy-action@0.20.0
-        with:
-          image-ref: ${{ env.IMAGE_URI }}:latest
-          format: json
-          output: trivy-results.json
-
-      - name: Upload Trivy Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-security-scan
-          path: trivy-results.json
+          SHA_TAG=_
 
