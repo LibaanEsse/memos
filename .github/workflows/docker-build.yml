@@ -24,6 +24,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Debug - List root files
+        run: ls -la
+
+      - name: Debug - List ./app contents
+        run: ls -la ./app
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -46,6 +52,4 @@ jobs:
 
           docker tag memos-app:latest "${IMAGE_URI}:latest"
           docker push "${IMAGE_URI}:latest"
-
-          SHA_TAG=_
 
