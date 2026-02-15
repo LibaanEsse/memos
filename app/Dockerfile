@@ -28,7 +28,7 @@ RUN rm -rf server/router/frontend/dist
 COPY --from=frontend-builder /web/dist ./server/router/frontend/dist
 
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o memos ./cmd/memos/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o memos ./cmd/memos
 
 # Runtime stage
 FROM alpine:3.19
