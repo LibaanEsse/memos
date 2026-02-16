@@ -42,14 +42,19 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          echo "Building Docker image using ./app as context..."
-          docker build -t memos-app:latest ./app
+        echo "Building Docker image using ./app as context..."
+        docker build -f ./app/Dockerfile -t memos:debug ./app
 
       - name: Tag and Push Docker Image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ env.ECR_REPOSITORY }}
         run: |
-          REGISTRY=${{ steps.login-ecr.outputs.registry }}
-          IMAGE_URI=${REGISTRY}/${{ env.ECR_REPOSITORY }}
-
-          docker tag memos-app:latest "${IMAGE_URI}:latest"
+          IMAGE_URI="${REGISTRY}/${REPOSITORY}"
+          echo "Tagging image memos:debug as ${IMAGE_URI}:latest"
+          docker tag memos:debug "${IMAGE_URI}:latest"
+          echo "Pushing image to ECR..."
           docker push "${IMAGE_URI}:latest"
+
+
 

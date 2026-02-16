@@ -12,7 +12,8 @@ COPY web/ ./
 RUN npm run build
 
 # Backend build stage
-FROM golang:1.25-alpine AS backend-builder
+FROM golang:1.22-alpine AS builder
+
 WORKDIR /app
 
 RUN apk add --no-cache git
@@ -27,6 +28,7 @@ COPY . .
 RUN rm -rf server/router/frontend/dist
 COPY --from=frontend-builder /web/dist ./server/router/frontend/dist
 
+RUN pwd && ls -R .
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o memos ./cmd/memos
 
