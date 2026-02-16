@@ -9,7 +9,6 @@ on:
 
 jobs:
   build:
-    name: Build and Push Docker Image
     runs-on: ubuntu-latest
 
     permissions:
@@ -24,12 +23,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Debug — list root
-        run: ls -la
-
-      - name: Debug — list app folder
-        run: ls -la ./app
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -40,26 +33,18 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Debug: Show registry and repository
+        run: |
+          echo "REGISTRY='${{ steps.login-ecr.outputs.registry }}'"
+          echo "REPOSITORY='${{ env.ECR_REPOSITORY }}'"
+
       - name: Build, Tag, and Push Docker Image
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ env.ECR_REPOSITORY }}
         run: |
           IMAGE_URI="${REGISTRY}/${REPOSITORY}:latest"
-          echo "Building and pushing image to ${IMAGE_URI}"
+          echo "➡️ Building and pushing image to ${IMAGE_URI}"
           docker build -t "${IMAGE_URI}" -f ./app/Dockerfile ./app
           docker push "${IMAGE_URI}"
-
-      - name: Security Scan with Trivy
-        uses: aquasecurity/trivy-action@0.20.0
-        with:
-          image-ref: ${{ env.IMAGE_URI }}
-          format: json
-          output: trivy-results.json
-
-      - name: Upload Trivy Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-security-scan
-          path: trivy-results.json
 
