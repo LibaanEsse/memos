@@ -42,8 +42,8 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          echo "Building Docker image using ./app as context..."
-          docker build -f ./app/Dockerfile -t memos:debug ./app
+          echo "Building Docker image from the root..."
+          docker build -t memos:debug .
 
       - name: Tag and Push Docker Image
         env:
