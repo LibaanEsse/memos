@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "app/**"
-      - ".github/workflows/docker-build.yml"
+      - ".github/workflows/docker-build.yaml"
   workflow_dispatch:
 
 jobs:
@@ -24,10 +24,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Debug - List root files
+      - name: Debug — list root
         run: ls -la
 
-      - name: Debug - List ./app contents
+      - name: Debug — list app folder
         run: ls -la ./app
 
       - name: Configure AWS Credentials
@@ -42,19 +42,33 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          echo "Building Docker image from the root..."
-          docker build -t memos:debug .
+          echo "Building Docker image from app folder"
+          docker build \
+            -t "${{ env.ECR_REPOSITORY }}:latest" \
+            -f ./app/Dockerfile \
+            ./app
 
       - name: Tag and Push Docker Image
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ env.ECR_REPOSITORY }}
         run: |
-          IMAGE_URI="${REGISTRY}/${REPOSITORY}"
-          echo "Tagging image memos:debug as ${IMAGE_URI}:latest"
-          docker tag memos:debug "${IMAGE_URI}:latest"
-          echo "Pushing image to ECR..."
-          docker push "${IMAGE_URI}:latest"
+          REGISTRY=${{ steps.login-ecr.outputs.registry }}
+          IMAGE_URI="${REGISTRY}/${{ env.ECR_REPOSITORY }}:latest"
+          echo "IMAGE_URI=${IMAGE_URI}" >> $GITHUB_ENV
 
+          echo "Tagging image as ${IMAGE_URI}"
+          docker tag "${{ env.ECR_REPOSITORY }}:latest" "${IMAGE_URI}"
+          echo "Pushing image to ECR"
+          docker push "${IMAGE_URI}"
 
+      - name: Security Scan with Trivy
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: ${{ env.IMAGE_URI }}
+          format: json
+          output: trivy-results.json
+
+      - name: Upload Trivy Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-security-scan
+          path: trivy-results.json
 

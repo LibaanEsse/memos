@@ -1,48 +1,52 @@
-# Frontend build stage
+# ----- Frontend build stage -----
 FROM node:20-alpine AS frontend-builder
+
 WORKDIR /web
-
-ENV NODE_OPTIONS="--max-old-space-size=4096"
-
 
 COPY web/package*.json ./
 RUN npm install
 
-COPY web/ ./
+COPY web .
 RUN npm run build
 
-# Backend build stage
-FROM golang:1.22-alpine AS builder
+
+# ----- Backend build stage -----
+FROM golang:1.25-alpine AS backend-builder
 
 WORKDIR /app
 
-RUN apk add --no-cache git
-
-
+# Only copy Go module files first for better caching
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Copy all source code
 COPY . .
 
-
+# Remove any old frontend assets
 RUN rm -rf server/router/frontend/dist
+
+# Copy new frontend build from first stage
 COPY --from=frontend-builder /web/dist ./server/router/frontend/dist
 
-RUN pwd && ls -R .
+# Build the Go binary
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -o memos ./cmd/memos
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o memos ./cmd/memos
 
-# Runtime stage
+# ----- Runtime stage -----
 FROM alpine:3.19
 
+# Create nonroot user for security
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
 
-COPY --from=backend-builder /app/memos ./
+# Copy the compiled binary from build stage
+COPY --from=backend-builder /app/memos .
 
-RUN mkdir -p /var/opt/memos \
-    && chown -R appuser:appgroup /var/opt/memos
+# Create data directory and give ownership
+RUN mkdir -p /var/opt/memos && \
+    chown -R appuser:appgroup /var/opt/memos
 
 ENV MEMOS_MODE=prod \
     MEMOS_DATA=/var/opt/memos \
@@ -53,5 +57,4 @@ USER appuser
 EXPOSE 5230
 
 CMD ["./memos"]
-
 
