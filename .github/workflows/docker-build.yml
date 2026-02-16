@@ -40,23 +40,14 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build Docker Image
+      - name: Build, Tag, and Push Docker Image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ env.ECR_REPOSITORY }}
         run: |
-          echo "Building Docker image from app folder"
-          docker build \
-            -t "${{ env.ECR_REPOSITORY }}:latest" \
-            -f ./app/Dockerfile \
-            ./app
-
-      - name: Tag and Push Docker Image
-        run: |
-          REGISTRY=${{ steps.login-ecr.outputs.registry }}
-          IMAGE_URI="${REGISTRY}/${{ env.ECR_REPOSITORY }}:latest"
-          echo "IMAGE_URI=${IMAGE_URI}" >> $GITHUB_ENV
-
-          echo "Tagging image as ${IMAGE_URI}"
-          docker tag "${{ env.ECR_REPOSITORY }}:latest" "${IMAGE_URI}"
-          echo "Pushing image to ECR"
+          IMAGE_URI="${REGISTRY}/${REPOSITORY}:latest"
+          echo "Building and pushing image to ${IMAGE_URI}"
+          docker build -t "${IMAGE_URI}" -f ./app/Dockerfile ./app
           docker push "${IMAGE_URI}"
 
       - name: Security Scan with Trivy
