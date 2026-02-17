@@ -17,20 +17,20 @@ FROM golang:1.25-alpine AS backend-builder
 
 WORKDIR /app
 
-# Copy only Go module files first for caching
-COPY app/go.mod app/go.sum ./
+# Only copy Go module files first for better caching
+COPY go.mod go.sum .     
 RUN go mod download
 
-# Copy all Go source code from app folder
-COPY app . 
+# Copy all source code
+COPY . .                  
 
 # Remove old frontend build if exists
 RUN rm -rf server/router/frontend/dist
 
-# Copy new frontend build from frontend-builder
+# Copy new frontend build from first stage
 COPY --from=frontend-builder /web/dist ./server/router/frontend/dist
 
-# Build the Go binary from cmd/memos
+# Build the Go binary
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     go build -o memos ./cmd/memos
 
