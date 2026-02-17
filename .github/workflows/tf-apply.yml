@@ -1,0 +1,57 @@
+name: Terraform Apply
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      TF_VAR_domain_name: ${{ secrets.DOMAIN_NAME }}
+      TF_VAR_memos_admin_username: ${{ secrets.MEMOS_ADMIN_USERNAME }}
+      TF_VAR_memos_admin_password: ${{ secrets.MEMOS_ADMIN_PASSWORD }}
+      TF_VAR_route53_zone_name: ${{ secrets.ROUTE53_ZONE_NAME }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install TFLint
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
+      - name: Run TFLint
+        run: |
+          cd terraform
+          tflint --init
+          tflint --disable-rule=terraform_unused_declarations
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: eu-west-2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform -chdir=terraform init
+
+      - name: Terraform Apply
+        run: terraform -chdir=terraform apply -auto-approve
+
+      - name: Post-Deploy Health Check
+        run: |
+          echo "Waiting for service..."
+          sleep 30
+          curl --fail http://memos-dev-alb-567209192.eu-west-2.elb.amazonaws.com/health
+
