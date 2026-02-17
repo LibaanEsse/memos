@@ -13,7 +13,7 @@ RUN npm run build
 
 
 # ----- Backend build stage -----
-FROM golang:1.24 AS backend-builder
+FROM golang:1.25 AS backend-builder
 
 WORKDIR /app
 
@@ -24,6 +24,11 @@ RUN go mod download
 # Copy all source code
 COPY . .                  
 RUN ls -R /app
+RUN ls -R ./cmd/memos
+RUN go version
+RUN go env
+RUN go mod tidy
+
 # Remove old frontend build if exists
 RUN rm -rf server/router/frontend/dist
 
