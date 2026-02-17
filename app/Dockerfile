@@ -13,7 +13,7 @@ RUN npm run build
 
 
 # ----- Backend build stage -----
-FROM golang:1.25-alpine AS backend-builder
+FROM golang:1.24 AS backend-builder
 
 WORKDIR /app
 
