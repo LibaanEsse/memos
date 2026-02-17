@@ -1,51 +1,41 @@
-name: Docker Build and Push
+name: Build & Push Docker
 
 on:
   push:
-    paths:
-      - "app/**"
-      - ".github/workflows/docker-build.yml"
+    branches:
+      - main
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
-  build:
-    name: Build and Push Docker Image
+  build-and-push:
     runs-on: ubuntu-latest
-
-    permissions:
-      id-token: write
-      contents: read
-
-    env:
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      ECR_REPOSITORY: ${{ secrets.DOCKER_REPO }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Login to Amazon ECR
+      - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Debug: Show registry and repository
-        run: |
-          echo "REGISTRY='${{ steps.login-ecr.outputs.registry }}'"
-          echo "REPOSITORY='${{ env.ECR_REPOSITORY }}'"
-
-      - name: Build, Tag, and Push Docker Image
+      - name: Build & tag
         env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.DOCKER_REPO }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          IMAGE_URI="${REGISTRY}/${REPOSITORY}:latest"
-          echo "➡️ Building and pushing image to ${IMAGE_URI}"
-          docker build -t "${IMAGE_URI}" -f ./app/Dockerfile ./app
-          docker push "${IMAGE_URI}"
+          IMAGE_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
+          echo "Building image $IMAGE_URI"
+          docker build -t "$IMAGE_URI" -f ./app/Dockerfile ./app
+          docker push "$IMAGE_URI"
 
