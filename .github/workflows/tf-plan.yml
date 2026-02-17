@@ -52,6 +52,11 @@ jobs:
         run: |
          terraform -chdir=terraform force-unlock -force 998389de-c138-8a89-8ea0-1614db70b28b || echo "Lock already released"
 
-      - name: Terraform Plan
-        run: terraform -chdir=terraform plan
+      - name: Apply ACM certificate first
+        run: terraform -chdir=terraform apply -target=module.acm.aws_acm_certificate.this -auto-approve
+
+      - name: Terraform Plan & Apply
+        run: |
+          terraform -chdir=terraform plan
+          terraform -chdir=terraform apply -auto-approve
 
