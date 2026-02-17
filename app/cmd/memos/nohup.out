@@ -1,0 +1,11 @@
+2026/02/05 18:01:25 INFO background runners started goroutines=8
+Memos 0.26.0 started successfully!
+Data directory: /home/libaan/memos/app/cmd/memos
+Database driver: sqlite
+Server running on port 8081
+Access your memos at: http://localhost:8081
+
+Documentation: https://usememos.com
+Source code: https://github.com/usememos/memos
+
+Happy note-taking!
