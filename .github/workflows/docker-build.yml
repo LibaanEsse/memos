@@ -6,13 +6,17 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      AWS_REGION: eu-west-2
+      ECR_REPOSITORY: memos-dev-memos
 
     steps:
       - name: Checkout code
@@ -22,20 +26,37 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build & tag
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.DOCKER_REPO }}
-          IMAGE_TAG: ${{ github.sha }}
+      - name: Build Docker image
         run: |
-          IMAGE_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
-          echo "Building image $IMAGE_URI"
-          docker build -t "$IMAGE_URI" -f ./app/Dockerfile ./app
-          docker push "$IMAGE_URI"
+          docker build -t memos-app:latest ./app
+
+      - name: Tag & Push Docker image
+        run: |
+          REGISTRY=${{ steps.login-ecr.outputs.registry }}
+          IMAGE_URI=${REGISTRY}/${{ env.ECR_REPOSITORY }}:latest
+
+          echo "IMAGE_URI=${IMAGE_URI}" >> $GITHUB_ENV
+
+          echo "Tagging image as ${IMAGE_URI}"
+          docker tag memos-app:latest "${IMAGE_URI}"
+          docker push "${IMAGE_URI}"
+
+      - name: Security Scan with Trivy
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: ${{ env.IMAGE_URI }}
+          format: json
+          output: trivy-results.json
+
+      - name: Upload Trivy Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-security-scan
+          path: trivy-results.json
 
