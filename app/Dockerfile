@@ -23,7 +23,7 @@ RUN go mod download
 
 # Copy all source code
 COPY . .                  
-
+RUN ls -R /app
 # Remove old frontend build if exists
 RUN rm -rf server/router/frontend/dist
 
