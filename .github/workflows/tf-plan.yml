@@ -50,7 +50,7 @@ jobs:
 
       - name: Terraform Force Unlock
         run: |
-          terraform -chdir=terraform force-unlock 998389de-c138-8a89-8ea0-1614db70b28b || echo "Lock already released"
+         terraform -chdir=terraform force-unlock -force 998389de-c138-8a89-8ea0-1614db70b28b || echo "Lock already released"
 
       - name: Terraform Plan
         run: terraform -chdir=terraform plan
