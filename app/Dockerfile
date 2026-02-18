@@ -17,11 +17,10 @@ FROM golang:1.25 AS backend-builder
 
 WORKDIR /app
 
-# Only copy Go module files first for better caching
+
 COPY go.mod go.sum .     
 RUN go mod download
 
-# Copy all source code
 COPY . .                  
 RUN ls -R /app
 RUN ls -R ./cmd/memos
@@ -29,10 +28,8 @@ RUN go version
 RUN go env
 RUN go mod tidy
 
-# Remove old frontend build if exists
 RUN rm -rf server/router/frontend/dist
 
-# Copy new frontend build from first stage
 COPY --from=frontend-builder /web/dist ./server/router/frontend/dist
 
 # Build the Go binary
