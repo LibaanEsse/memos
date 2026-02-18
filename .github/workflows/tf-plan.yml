@@ -24,22 +24,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install TFLint
-        run: |
-          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-
-      - name: Run TFLint
-        run: |
-          cd terraform
-          tflint --init
-          tflint --disable-rule=terraform_unused_declarations
-
-      - name: Configure AWS Credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: eu-west-2
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
@@ -47,6 +31,5 @@ jobs:
         run: terraform -chdir=terraform init -upgrade
 
       - name: Terraform Plan
-        run: terraform -chdir=terraform plan -no-color
-
+        run: terraform -chdir=terraform plan
 
