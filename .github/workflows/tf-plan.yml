@@ -42,6 +42,12 @@ jobs:
 
       - name: Terraform Init
         run: terraform -chdir=terraform init -upgrade
+      - name: Show Terraform variable
+        run: |
+          terraform -chdir=terraform console <<EOF
+          var.domain_name
+          EOF
+
 
       - name: Terraform Plan
         run: terraform -chdir=terraform plan -no-color
