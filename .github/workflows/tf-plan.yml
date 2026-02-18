@@ -1,9 +1,6 @@
 name: Terraform Plan
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -25,7 +22,8 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4                                                                                                              
+        uses: actions/checkout@v4
+
       - name: Install TFLint
         run: |
           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
@@ -46,17 +44,9 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-        run: terraform -chdir=terraform init
+        run: terraform -chdir=terraform init -upgrade
 
-      - name: Terraform Force Unlock
-        run: |
-         terraform -chdir=terraform force-unlock -force 998389de-c138-8a89-8ea0-1614db70b28b || echo "Lock already released"
+      - name: Terraform Plan
+        run: terraform -chdir=terraform plan -no-color
 
-      - name: Apply ACM certificate first
-        run: terraform -chdir=terraform apply -target=module.acm.aws_acm_certificate.this -auto-approve
-
-      - name: Terraform Plan & Apply
-        run: |
-          terraform -chdir=terraform plan
-          terraform -chdir=terraform apply -auto-approve
 
