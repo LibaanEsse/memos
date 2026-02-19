@@ -1,3 +1,4 @@
+# Create ACM Certificate
 resource "aws_acm_certificate" "this" {
   domain_name               = var.domain_name
   subject_alternative_names = var.subject_alternative_names
@@ -8,6 +9,7 @@ resource "aws_acm_certificate" "this" {
   }
 }
 
+# Create Route53 validation records for ACM
 resource "aws_route53_record" "validation" {
   for_each = {
     for dvo in aws_acm_certificate.this.domain_validation_options : dvo.domain_name => {
@@ -23,10 +25,13 @@ resource "aws_route53_record" "validation" {
   type            = each.value.type
   ttl             = 60
   records         = [each.value.record]
+
+  lifecycle {
+    ignore_changes = [records]
+  }
 }
 
 resource "aws_acm_certificate_validation" "this" {
   certificate_arn         = aws_acm_certificate.this.arn
   validation_record_fqdns = [for r in aws_route53_record.validation : r.fqdn]
 }
-
