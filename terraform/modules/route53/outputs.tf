@@ -1,5 +1,5 @@
+# modules/route53/outputs.tf
 output "hosted_zone_id" {
-  description = "Route53 hosted zone ID"
-  value       = aws_route53_zone.lib_zone.zone_id
+  value = data.aws_route53_zone.lib_zone.zone_id
 }
 

@@ -43,6 +43,17 @@ jobs:
       - name: Terraform Init
         run: terraform -chdir=terraform init -upgrade
 
-      - name: Terraform Plan
-        run: terraform -chdir=terraform plan -no-color
+      - name: Terraform Format Check
+        run: terraform -chdir=terraform fmt -check
 
+      - name: Terraform Validate
+        run: terraform -chdir=terraform validate
+
+      - name: Terraform Plan
+        run: terraform -chdir=terraform plan -out=tfplan -no-color
+
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v3
+        with:
+          name: tfplan
+          path: terraform/tfplan

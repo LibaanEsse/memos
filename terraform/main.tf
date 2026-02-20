@@ -29,13 +29,11 @@ module "efs" {
   efs_sg_id          = module.sg.efs_sg_id
   tags               = local.common_tags
 }
-
 module "acm" {
-  source                    = "./modules/acm"
-  domain_name               = var.domain_name
-  subject_alternative_names = []
-  hosted_zone_id            = module.route53.hosted_zone_id
+  source      = "./modules/acm"
+  domain_name = var.domain_name
 }
+
 
 module "alb" {
   source            = "./modules/alb"

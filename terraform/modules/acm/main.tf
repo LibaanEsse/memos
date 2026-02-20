@@ -1,10 +1,12 @@
 data "aws_route53_zone" "this" {
-  name         = var.domain_name
+  name         = "libaane.org." 
   private_zone = false
 }
 
+
+# Create ACM certificate for tm.libaane.org
 resource "aws_acm_certificate" "cert" {
-  domain_name       = "tm.${var.domain_name}"
+  domain_name       = "tm.libaane.org"
   validation_method = "DNS"
 
   lifecycle {
@@ -12,10 +14,11 @@ resource "aws_acm_certificate" "cert" {
   }
 
   tags = {
-    Name = "tm.${var.domain_name}-certificate"
+    Name = "tm.libaane.org-certificate"
   }
 }
 
+# Create DNS validation records in Route 53
 resource "aws_route53_record" "cert_validation" {
   for_each = {
     for dvo in aws_acm_certificate.cert.domain_validation_options :
@@ -34,10 +37,8 @@ resource "aws_route53_record" "cert_validation" {
   zone_id         = data.aws_route53_zone.this.zone_id
 }
 
+# Validate the certificate
 resource "aws_acm_certificate_validation" "this" {
   certificate_arn         = aws_acm_certificate.cert.arn
-  validation_record_fqdns = [
-    for record in aws_route53_record.cert_validation : record.fqdn
-  ]
+  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
 }
-
