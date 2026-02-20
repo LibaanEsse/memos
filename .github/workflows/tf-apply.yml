@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - terraform/**                
+      - Terraform/**          
       - .github/workflows/apply.yml
 
 permissions:
@@ -25,11 +25,11 @@ jobs:
       TF_VAR_task_cpu: ${{ vars.TASK_CPU }}
       TF_VAR_task_memory: ${{ vars.TASK_MEMORY }}
       TF_VAR_app_count: ${{ vars.APP_COUNT }}
-      
+
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     defaults:
       run:
-        working-directory: ./terraform   
+        working-directory: ./Terraform
 
     steps:
       - name: Checkout code
@@ -38,7 +38,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version:  1.7.7
+          terraform_version: 1.6.8
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -54,10 +54,10 @@ jobs:
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan -input=false
-      
+
       - name: Terraform Apply
         run: terraform apply -input=false tfplan
-     
+
       - name: Summary
         if: success()
         run: echo "Terraform apply complete"
