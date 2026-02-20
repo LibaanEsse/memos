@@ -1,0 +1,46 @@
+name: Terraform Destroy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform-destroy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./terraform
+
+    env:
+      TF_VAR_domain_name: ${{ vars.DOMAIN_NAME }}
+      TF_VAR_container_image: ${{ vars.CONTAINER_IMAGE }}
+      TF_VAR_container_port: ${{ vars.CONTAINER_PORT }}
+      TF_VAR_container_name: ${{ vars.CONTAINER_NAME }}
+      TF_VAR_task_cpu: ${{ vars.TASK_CPU }}
+      TF_VAR_task_memory: ${{ vars.TASK_MEMORY }}
+      TF_VAR_app_count: ${{ vars.APP_COUNT }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::979244567715:role/GitHubActionsECRRole
+          aws-region: eu-west-2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~> 1.14.0"
+
+      - name: Terraform Init
+        run: terraform init -input=false
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve -input=false
