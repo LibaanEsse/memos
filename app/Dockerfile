@@ -1,67 +1,39 @@
-# ----- Frontend build stage -----
+# Frontend build stage
 FROM node:20-alpine AS frontend-builder
-
 WORKDIR /web
 
-# Copy package files and install deps
+# Set environment variable to increase heap memory (e.g., 4GB)
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 COPY web/package*.json ./
 RUN npm install
-
-# Copy frontend source and build
 COPY web . 
 RUN npm run build
 
 
-# ----- Backend build stage -----
-FROM golang:1.25 AS backend-builder
-
+# Backend build stage
+FROM golang:1.25-alpine AS backend-builder
 WORKDIR /app
-
-
-COPY go.mod go.sum .     
+COPY ["go.mod", "go.sum", "./"]
 RUN go mod download
-
-COPY . .                  
-RUN ls -R /app
-RUN ls -R ./cmd/memos
-RUN go version
-RUN go env
-RUN go mod tidy
-
+COPY . .
 RUN rm -rf server/router/frontend/dist
-
 COPY --from=frontend-builder /web/dist ./server/router/frontend/dist
-
-# Build the Go binary
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-    go build -o memos ./cmd/memos
+RUN CGO_ENABLED=0 GOOS=linux go build -o memos ./cmd/memos
 
 
-# ----- Runtime stage -----
+# Runtime Stage
 FROM alpine:3.19
-
-# Create non-root user for security
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-
 WORKDIR /app
+COPY --from=backend-builder /app/memos . 
+RUN mkdir -p /var/opt/memos && chown -R appuser:appgroup /var/opt/memos
 
-# Copy the compiled Go binary
-COPY --from=backend-builder /app/memos .
-
-# Create data directory and give ownership
-RUN mkdir -p /var/opt/memos && \
-    chown -R appuser:appgroup /var/opt/memos
-
-# Environment variables
 ENV MEMOS_MODE=prod \
     MEMOS_DATA=/var/opt/memos \
     MEMOS_PORT=5230
 
 USER appuser
-
 EXPOSE 5230
 
-# Default entrypoint
 CMD ["./memos"]
-
-
