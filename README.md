@@ -14,7 +14,7 @@ The solution is designed to be secure, scalable, and production-ready, incorpora
 - Architecture
 - Repository Structure
 - Reproduction Steps
--  Build and Push Docker Image
+- Build and Push Docker Image
 - AWS (Clickops)
 - Infrastructure (Terraform)
 - CI/CD Pipelines
@@ -114,5 +114,11 @@ docker build -t memos .
 docker tag memos:latest <ECR_REPO_URL>:latest
 docker push <ECR_REPO_URL>:latest
 ```
+## AWS (Clickops)
+- Created ECR repository and pushed initial image
+- Built infrastructure manually in AWS Console to understand services
+- Deployed VPC, subnets, security groups, ALB, ECS cluster
+- Configured ACM certificate and Route 53 DNS records
+- Tested full flow end-to-end
 
 
