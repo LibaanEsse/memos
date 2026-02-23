@@ -13,7 +13,8 @@ The solution is designed to be secure, scalable, and production-ready, incorpora
 - Overview
 - Architecture
 - Repository Structure
-- Reproduction Steps 
+- Reproduction Steps
+-  Build and Push Docker Image
 - AWS (Clickops)
 - Infrastructure (Terraform)
 - CI/CD Pipelines
@@ -102,4 +103,14 @@ docker run -d -p 8081:8081 --name memos memos-app:local
 
 **4. Access the application:**
 ```bash
-http://localhost:8081
+http://localhost:5230 
+```
+##  Build and Push Docker Image
+
+aws ecr get-login-password --region eu-west-2 \
+  | docker login --username AWS --password-stdin <ECR_REPO_URL>
+
+docker build -t memos .
+docker tag memos:latest <ECR_REPO_URL>:latest
+docker push <ECR_REPO_URL>:latest
+```
