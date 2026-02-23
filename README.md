@@ -21,5 +21,6 @@ The solution is designed to be secure, scalable, and production-ready, incorpora
 
 ## Architecture
 
-<img src="images/architecture-diagram.png"></>
+<img src="images/architecture-diagram.png">
+
 
