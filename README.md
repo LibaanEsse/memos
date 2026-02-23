@@ -98,7 +98,7 @@ docker build -t memos-app:local -f docker/Dockerfile .
 
 **3. Run the container:**
 ```bash
-docker run -d -p 8081:8081 --name memos memos-app:local
+docker run -d -p 5230:5230 --name memos memos-app:local
 ```
 
 **4. Access the application:**
@@ -106,7 +106,7 @@ docker run -d -p 8081:8081 --name memos memos-app:local
 http://localhost:5230 
 ```
 ##  Build and Push Docker Image
-
+``` bash
 aws ecr get-login-password --region eu-west-2 \
   | docker login --username AWS --password-stdin <ECR_REPO_URL>
 
@@ -114,3 +114,4 @@ docker build -t memos .
 docker tag memos:latest <ECR_REPO_URL>:latest
 docker push <ECR_REPO_URL>:latest
 ```
+
