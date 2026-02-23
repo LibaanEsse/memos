@@ -121,4 +121,6 @@ docker push <ECR_REPO_URL>:latest
 - Configured ACM certificate and Route 53 DNS records
 - Tested full flow end-to-end
 
+All manual AWS configuration has been removed to ensure the environment is fully reproducible through Terraform.
+
 
