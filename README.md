@@ -169,7 +169,21 @@ Implemented Github Actions for the pipelines.
 ### Terraform Sestroy 
 <img src= "images/TF-destroy.yml.png">
 
-  
+###  Challenges & Lessons Learned
+
+This project presented several challenges that strengthened my understanding of infrastructure as code and CI/CD practices.
+
+* **Commit early and often** – Frequent, incremental commits made it significantly easier to troubleshoot failed pipelines and infrastructure issues.
+
+* **Windows container compatibility** – As a Windows user, I experienced image build and runtime inconsistencies. Introducing ARM64 configurations in ECS task definitions and Terraform initially caused repeated pipeline failures and slower builds. I learned to avoid unnecessary architecture changes in CI Yml unless explicitly required.
+
+* **Pipeline failures** – Debugging GitHub Actions failures during Terraform plan and apply stages improved my understanding of IAM permissions, environment variables, dependency ordering, and build consistency.
+
+* **Terraform state locking** – Encountering state lock errors highlighted the importance of remote state management, avoiding concurrent applies, and properly handling failed runs.
+
+These challenges reinforced best practices for building resilient, production-grade cloud deployments.
+
+
 
 
 
