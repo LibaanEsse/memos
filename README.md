@@ -73,3 +73,19 @@ Key Components:
 
 ```
 
+##  Reproduction Steps 
+
+# Prerequisites
+AWS Account + CLI configured
+Terraform >= 1.6.0
+Docker Desktop
+GitHub account
+Registered Domain
+
+# 1. Application and Local Validation
+
+**1. Clone the repository:**
+```bash
+git clone https://github.com/LibaanEsse/memos.git
+cd Memos
+```
