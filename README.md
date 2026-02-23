@@ -76,11 +76,11 @@ Key Components:
 ##  Reproduction Steps 
 
 # Prerequisites
-AWS Account + CLI configured
-Terraform >= 1.6.0
-Docker Desktop
-GitHub account
-Registered Domain
+- AWS Account + CLI configured
+- Terraform >= 1.6.0
+- Docker Desktop
+- GitHub account
+- Registered Domain
 
 # 1. Application and Local Validation
 
@@ -89,3 +89,17 @@ Registered Domain
 git clone https://github.com/LibaanEsse/memos.git
 cd Memos
 ```
+**2. Build the Docker image:**
+**Note: Docker Desktop must be running and you must be logged in**
+```bash
+docker build -t memos-app:local -f docker/Dockerfile .
+```
+
+**3. Run the container:**
+```bash
+docker run -d -p 8081:8081 --name memos memos-app:local
+```
+
+**4. Access the application:**
+```bash
+http://localhost:8081
