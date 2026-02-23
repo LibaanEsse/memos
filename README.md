@@ -23,4 +23,15 @@ The solution is designed to be secure, scalable, and production-ready, incorpora
 
 <img src="images/architecture-diagram.png">
 
+Key Components: 
+- Production-ready deployment of the Memos application on AWS
+- Multi-AZ architecture for high availability and resilience
+- HTTPS by default using ACM-managed certificates
+- Application Load Balancer routing traffic to ECS Fargate tasks
+- Private subnets with NAT gateways for secure outbound traffic
+- Persistent data storage through Amazon EFS
+- Automated CI/CD pipelines handling image builds and infrastructure updates
+- Fully modular Terraform code, easy to extend and reuse
+- Domain and DNS management through Route 53
+
 
