@@ -123,4 +123,27 @@ docker push <ECR_REPO_URL>:latest
 
 All manual AWS configuration has been removed to ensure the environment is fully reproducible through Terraform.
 
+##  Infrastructure (Terraform)
+ created the the setup using modular Terraform.
+
+- Iniitialised Terraform in the directory:
+```bash
+terraform init
+```
+
+- Iteretively planned and applied infrastructure while building modules:
+``` bash
+terraform plan
+terraform apply
+```
+
+- Verified infrastructure using the ALB DNS with HTTPS endpoint:
+```bash
+curl <ALB DNS>
+curl https://<DOMAIN>
+curl https://<DOMAIN>/health
+```
+
+
+
 
