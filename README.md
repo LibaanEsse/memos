@@ -83,7 +83,7 @@ Key Components:
 - GitHub account
 - Registered Domain
 
-# 1. Application and Local Validation
+#  Application and Local Validation
 
 **1. Clone the repository:**
 ```bash
@@ -114,4 +114,5 @@ docker build -t memos .
 docker tag memos:latest <ECR_REPO_URL>:latest
 docker push <ECR_REPO_URL>:latest
 ```
+
 
