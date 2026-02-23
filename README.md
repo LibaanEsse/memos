@@ -114,6 +114,10 @@ docker build -t memos .
 docker tag memos:latest <ECR_REPO_URL>:latest
 docker push <ECR_REPO_URL>:latest
 ```
+
+**Multi-stage Docker build optimisation**
+implemented a multi-stage Dockerfile to separate build and runtime environments, significantly reducing the final image size from approximately 1.44GB to ~200MB. This improved build efficiency, reduced attack surface, and optimised deployment performance through effective layer caching.
+
 ## AWS (Clickops)
 - Created ECR repository and pushed initial image
 - Built infrastructure manually in AWS Console to understand services
@@ -182,6 +186,7 @@ This project presented several challenges that strengthened my understanding of 
 * **Terraform state locking** – Encountering state lock errors highlighted the importance of remote state management, avoiding concurrent applies, and properly handling failed runs.
 
 These challenges reinforced best practices for building resilient, production-grade cloud deployments.
+
 
 
 
