@@ -140,6 +140,37 @@ curl https://<DOMAIN>
 curl https://<DOMAIN>/health
 ```
 
+- Destroyed infrastructure at the end:
+``` bash
+terraform destroy
+```
+
+## CI/CD Pipelines
+
+Implemented Github Actions for the pipelines.
+
+**Workflows include:**
+
+- Docker image build & push: 
+- Terraform apply: 
+- Terraform Sestroy: 
+
+ ## Deployment Visuals
+
+### Memos Application Running
+<img src="images/Tm.Libaan.org evidence.png>
+
+### Docker Build & Push
+
+
+### Terraform apply
+<img src="images/Terraform-apply.yml.png>
+
+### Terraform Sestroy 
+<img src= "images/TF-destroy.yml.png">
+
+  
+
 
 
 
