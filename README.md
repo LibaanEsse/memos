@@ -125,17 +125,13 @@ All manual AWS configuration has been removed to ensure the environment is fully
 
 ##  Infrastructure (Terraform)
  created the the setup using modular Terraform.
-
-- Iniitialised Terraform in the directory:
-```bash
-terraform init
+From the terraform/ directory:
 ```
-
-- Iteretively planned and applied infrastructure while building modules:
-``` bash
+terraform init
 terraform plan
 terraform apply
 ```
+---
 
 - Verified infrastructure using the ALB DNS with HTTPS endpoint:
 ```bash
@@ -143,6 +139,7 @@ curl <ALB DNS>
 curl https://<DOMAIN>
 curl https://<DOMAIN>/health
 ```
+
 
 
 
