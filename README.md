@@ -34,4 +34,42 @@ Key Components:
 - Fully modular Terraform code, easy to extend and reuse
 - Domain and DNS management through Route 53
 
+## 📁 Repository Structure
+
+```bash
+.
+├── .github/
+│   └── workflows/
+│       ├── docker-build.yml
+│       ├── tf-apply.yml
+│       └── tf-destroy.yml
+│
+├── app/
+│   └── Dockerfile
+│
+├── images/
+│
+├── terraform/
+│   ├── modules/
+│   │   ├── acm
+│   │   ├── alb
+│   │   ├── ecr
+│   │   ├── ecs
+│   │   ├── efs
+│   │   ├── route53
+│   │   ├── sg
+│   │   └── vpc
+│   │
+│   ├── backend.tf
+│   ├── locals.tf
+│   ├── main.tf
+│   ├── outputs.tf
+│   ├── providers.tf
+│   ├── terraform.tfvars
+│   └── variables.tf
+│
+├── .gitignore
+└── README.md
+
+```
 
