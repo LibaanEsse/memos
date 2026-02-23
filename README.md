@@ -158,18 +158,19 @@ Implemented Github Actions for the pipelines.
  ## Deployment Visuals
 
 ### Memos Application Running
-<img src="images/Tm.Libaan.org evidence.png>
+<img src= "images/Tm.Libaan.org evidence.png">
 
 ### Docker Build & Push
-
+<img src= "images/docker-build.yml.png">
 
 ### Terraform apply
-<img src="images/Terraform-apply.yml.png>
+<img src= "images/Terraform-apply.yml.png">
 
 ### Terraform Sestroy 
 <img src= "images/TF-destroy.yml.png">
 
   
+
 
 
 
