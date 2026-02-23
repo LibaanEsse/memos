@@ -158,7 +158,7 @@ Implemented Github Actions for the pipelines.
  ## Deployment Visuals
 
 ### Memos Application Running
-<img src="images/Tm.Libaan.org evidence.png">
+<img src="images/Tm.Libaan.org%20evidence.png" alt="Deployment Evidence" width="800">
 
 ### Docker Build & Push
 <img src= "images/docker-build.yml.png">
@@ -170,6 +170,7 @@ Implemented Github Actions for the pipelines.
 <img src= "images/TF-destroy.yml.png">
 
   
+
 
 
 
