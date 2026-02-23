@@ -19,3 +19,7 @@ The solution is designed to be secure, scalable, and production-ready, incorpora
 - CI/CD Pipelines
 - Challenges & Lessons Learned
 
+## Architecture
+
+<img src="images/architecture-diagram.png"></>
+
